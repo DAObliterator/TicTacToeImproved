@@ -1,0 +1,230 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="game.css" />
+  </head>
+  <body>
+    <script></script>
+    <div class="container">
+      <div class="grid">
+        <div class="cell" id="1"></div>
+        <div class="cell" id="2"></div>
+        <div class="cell" id="3"></div>
+        <div class="cell" id="4"></div>
+        <div class="cell" id="5"></div>
+        <div class="cell" id="6"></div>
+        <div class="cell" id="7"></div>
+        <div class="cell" id="8"></div>
+        <div class="cell" id="9"></div>
+      </div>
+    </div>
+  </body>
+  <script>
+    const grid = document.querySelector(".grid");
+    const cell = document.getElementById("1");
+
+    /*cell.addEventListener( "click" , () => {
+        cell.style.backgroundColor = "red"
+        cell.innerHTML = "X"
+        cell.style.fontWeight = "solid"
+    })*/
+
+    let enteredArray = new Array();
+    let combsAvoided = new Array();
+    let availableTiles = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const winningCombination = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+      [1, 4, 7],
+      [3, 6, 9],
+      [1, 5, 9],
+      [3, 5, 7],
+      [2, 5, 8],
+    ];
+    const dangerousCombs = [
+      [1, 2],
+      [1, 3],
+      [1, 4],
+      [1, 7],
+      [1, 9],
+      [2, 4],
+      [2, 8],
+      [3, 2],
+      [3, 6],
+      [3, 7],
+      [3, 9],
+      [4, 5],
+      [4, 6],
+      [7, 4],
+      [7, 8],
+      [7, 9],
+      [8, 5],
+      [9, 8],
+      [9, 5],
+      [9, 6],
+    ];
+
+    grid.addEventListener("click", (e) => {
+      console.log(e.target.id);
+
+      enteredArray.push(parseInt(e.target.id));
+
+      let selectedTileId = parseInt(e.target.id);
+
+      console.log(selectedTileId);
+
+      availableTiles = availableTiles.filter(
+        (element) => element !== selectedTileId
+      );
+
+      console.log(availableTiles);
+
+      console.log(enteredArray);
+
+      if (enteredArray.length === 1) {
+        //computerChoice.innerHTML = "O";
+
+        let perfectCompChoice = document.getElementById("5");
+
+        perfectCompChoice.innerHTML = "O";
+      }
+
+      if (enteredArray.length >= 2) {
+        const compareArray = (smallArray, bigArray) => {
+          const newArr = new Array();
+          for (k of smallArray) {
+            for (l of bigArray) {
+              if (l === k) {
+                newArr.push(l);
+                //console.log(newArr);
+                const blah = newArr.length === smallArray.length ? true : false;
+                //return newArr.length === smallArray.length ? true : false;
+                if (blah === true) {
+                  return blah;
+                }
+              }
+            }
+          }
+        };
+
+        let allDangComb = new Array();
+        for (i of dangerousCombs) {
+          if (compareArray(i, enteredArray) === true) {
+            allDangComb.push(i);
+          }
+        }
+
+        console.log(allDangComb);
+
+        const compareArray3 = (givenArray, winningCombination) => {
+          const arrayOfDCandMC = new Array();
+          for (j of winningCombination) {
+            for (k of givenArray) {
+              const newArr = new Array();
+              for (l of j) {
+                if (k.includes(l)) {
+                  newArr.push(l);
+                }
+              }
+              if (newArr.length === 2) {
+                let object = { dangerousArr: newArr, matchingComb: j };
+                arrayOfDCandMC.push(object);
+              }
+            }
+          }
+          return arrayOfDCandMC;
+        };
+
+        console.log(compareArray3(allDangComb, winningCombination));
+
+        let arrayOfObj = compareArray3(allDangComb, winningCombination);
+
+        let choices = new Array();
+        for (i of arrayOfObj) {
+          choices.push(
+            i.matchingComb.filter(
+              (mc) => !i.dangerousArr.some((da) => String(da) === String(mc))
+            )[0]
+          );
+        }
+
+        console.log(choices);
+
+        if (choices.length === 0) {
+          let randomTile;
+          while (
+            (randomTile = document.getElementById(
+              `${
+                availableTiles[
+                  Math.floor(Math.random() * availableTiles.length)
+                ]
+              }`
+            )).textContent !== ""
+          ) {
+            // No need to redeclare `randomTile` here
+          }
+          console.log(randomTile);
+
+          console.log(randomTile.id);
+
+          availableTiles = availableTiles.filter(
+            (element) => element !== randomTile.id
+          );
+
+          if (randomTile.textContent === "") {
+            randomTile.textContent = "O";
+          }
+        }
+
+        if (
+          choices.length === 1 &&
+          document.getElementById(`${choices[0]}`).textContent === ""
+        ) {
+          document.getElementById(`${choices[0]}`).textContent = "O";
+        } else if (
+          choices.length === 1 &&
+          document.getElementById(`${choices[0]}`).textContent !== ""
+        ) {
+          while (
+            (randomTile2 = document.getElementById(
+              `${
+                availableTiles[
+                  Math.floor(Math.random() * availableTiles.length)
+                ]
+              }`
+            )).textContent !== ""
+          ) {
+            // No need to redeclare `randomTile` here
+          }
+
+          console.log(randomTile2);
+          console.log(randomTile2.id);
+
+          availableTiles = availableTiles.filter(
+            (element) => element !== randomTile2.id
+          );
+
+          if (randomTile2.textContent === "") {
+            randomTile2.textContent = "O";
+          }
+        } else {
+          for (i of choices) {
+            let tile = document.getElementById(`${i}`);
+
+            if (tile.textContent === "") {
+              tile.textContent = "O";
+              break;
+            }
+          }
+        }
+      }
+
+      e.target.style.backgroundColor = "rgba(61, 184, 69, 0.642)";
+      e.target.innerHTML = "X";
+      e.target.style.fontWeight = "solid";
+    });
+  </script>
+</html>
